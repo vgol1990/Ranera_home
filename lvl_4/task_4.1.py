@@ -34,7 +34,7 @@ def CreateTable():
             School_id INTEGER NOT NULL PRIMARY KEY
 
         )"""
-
+    cur.execute(sql)
     sql = """
           CREATE TABLE IF NOT EXISTS School(
           School_id INTEGER NOT NULL,
@@ -57,23 +57,23 @@ def Insert_table():
     sql = '''INSERT INTO Students
         VALUES 
             (? ,? ,?)'''
-    arr = [
+    arr_student = [
         (201, 'Иван', 1),
         (202, 'Петр', 2),
         (203, 'Анастасия', 3),
         (204, 'Игорь', 4)
     ]
-    #cur.executemany(sql, arr)
+    cur.executemany(sql, arr_student)
 
     sql = '''INSERT INTO School
             VALUES  (?,?)'''
-    arr = [
+    arr_school = [
         ('1', 'Альтернатива'),
         ('2', 'Армат'),
         ('3', 'Новатор'),
         ('4', 'Эрудит')
     ]
-    cur.executemany(sql, arr)
+    cur.executemany(sql, arr_school)
 
     con.commit()
     con.close()
@@ -81,19 +81,23 @@ def Insert_table():
 
 
 def Select_from_table():
-    id = input('Введите id студента')
+    id = int(input('Введите id студента'))
     con = sqlite3.connect('teatchers.db')
     cur = con.cursor()
-    sql = 'SELECT * FROM Students'
-    # sql = 'SELECT Student_Id, Student_Name, School_Id FROM Students WHERE Student_Id = ?", (id)'
+    sql = f'SELECT * FROM Students JOIN School ON School.School_Id = Students.School_Id WHERE Students.Student_Id={id}'
     cur.execute(sql)
-    arr = cur.fetchall()
-    for i in range(len(arr)):
-        print('id студента:', arr[1][0])
-        print('Имя студента', arr[1][1])
-        print('id школы:', arr[1][2])
-        print('________________')
+    arr = cur.fetchone()
+    print('id студента:', arr[0])
+    print('Имя студента:', arr[1])
+    print('id школы:', arr[2])
+    print('Название школы:', arr[4])
 
+    # Вывод всех студентов
+    # for i in range(len(arr)):
+    #     print('id студента:', arr[1][0])
+    #     print('Имя студента', arr[1][1])
+    #     print('id школы:', arr[1][2])
+    #     print('________________')
 
 
 CreateTable()
